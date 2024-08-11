@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Quiz } from "../components/quiz-component/QuizComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { QuizState } from "../states/quiz/quizSlice";
+import { QuizState, setQuestionMaxNumber } from "../states/quiz/quizSlice";
 import { RootState } from "../states/store";
 
 export const quizData = [
@@ -48,7 +48,21 @@ export const quizData = [
   },
 ];
 const QuizPage = () => {
+  const dispatch = useDispatch();
   const { questionQuizNumber } = useSelector((state: RootState) => state.quiz);
+
+  //   useEffect(() => {
+  //     // Suponiendo que tienes una función para obtener las preguntas
+  //     const fetchQuestions = async () => {
+  //       const questions = await getQuestions(); // Ejemplo de función que obtiene las preguntas
+  //       dispatch(setQuestionMaxNumber(questions.length)); // Actualiza el número máximo de preguntas
+  //     };
+  //     fetchQuestions();
+  //   }, [dispatch]);
+
+  React.useEffect(() => {
+    dispatch(setQuestionMaxNumber(quizData.length));
+  }, []);
 
   return (
     <div className="quiz-page">

@@ -14,7 +14,7 @@ export interface QuizState {
 const initialState: QuizState = {
   questionState: [],
   questionQuizNumber: 1,
-  questionMaxNumber: 4,
+  questionMaxNumber: 0,
 };
 
 const quizSlice = createSlice({
@@ -41,6 +41,7 @@ const quizSlice = createSlice({
     resetQuiz: (state) => {
       state.questionState = [];
       state.questionQuizNumber = 1;
+      state.questionMaxNumber = 0;
     },
     nextQuestion: (state) => {
       if (state.questionQuizNumber < state.questionMaxNumber) {
@@ -52,6 +53,9 @@ const quizSlice = createSlice({
         state.questionQuizNumber -= 1;
       }
     },
+    setQuestionMaxNumber: (state, action: PayloadAction<number>) => {
+      state.questionMaxNumber = action.payload;
+    },
   },
 });
 
@@ -61,6 +65,7 @@ export const {
   resetQuiz,
   nextQuestion,
   previousQuestion,
+  setQuestionMaxNumber,
 } = quizSlice.actions;
 
 export default quizSlice.reducer;
