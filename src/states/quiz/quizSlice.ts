@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface QuestionState {
   questionNumber: number;
@@ -9,12 +9,14 @@ export interface QuizState {
   questionState: QuestionState[];
   questionQuizNumber: number;
   questionMaxNumber: number;
+  isLoading: boolean; // <-- Añadir isLoading
 }
 
 const initialState: QuizState = {
   questionState: [],
   questionQuizNumber: 1,
   questionMaxNumber: 0,
+  isLoading: false, // <-- Estado inicial para isLoading
 };
 
 const quizSlice = createSlice({
@@ -57,6 +59,22 @@ const quizSlice = createSlice({
       state.questionMaxNumber = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(startQuiz.pending, (state) => {
+        state.isLoading = true; // <-- Indicar que está cargando
+      })
+      .addCase(startQuiz.fulfilled, (state) => {
+        state.isLoading = false; // <-- Indicar que ha terminado de cargar
+      })
+      .addCase(startQuiz.rejected, (state) => {
+        state.isLoading = false; // <-- En caso de error, dejar de cargar
+      });
+  },
+});
+
+export const startQuiz = createAsyncThunk("quiz/startQuiz", async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 });
 
 export const {

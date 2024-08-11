@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Quiz } from "../components/quiz-component/QuizComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { QuizState, setQuestionMaxNumber } from "../states/quiz/quizSlice";
-import { RootState } from "../states/store";
+import {
+  QuizState,
+  setQuestionMaxNumber,
+  startQuiz,
+} from "../states/quiz/quizSlice";
+import { AppDispatch, RootState } from "../states/store";
 
 export const quizData = [
   {
@@ -48,8 +52,10 @@ export const quizData = [
   },
 ];
 const QuizPage = () => {
-  const dispatch = useDispatch();
-  const { questionQuizNumber } = useSelector((state: RootState) => state.quiz);
+  const dispatch = useDispatch<AppDispatch>();
+  const { questionQuizNumber, isLoading } = useSelector(
+    (state: RootState) => state.quiz
+  );
 
   //   useEffect(() => {
   //     // Suponiendo que tienes una función para obtener las preguntas
@@ -61,16 +67,29 @@ const QuizPage = () => {
   //   }, [dispatch]);
 
   React.useEffect(() => {
+    dispatch(startQuiz());
     dispatch(setQuestionMaxNumber(quizData.length));
   }, []);
 
   return (
     <div className="quiz-page">
-      <Quiz
-        title={quizData[questionQuizNumber - 1].title}
-        options={quizData[questionQuizNumber - 1].options}
-        question={quizData[questionQuizNumber - 1].question}
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Quiz
+          title={quizData[questionQuizNumber - 1].title}
+          options={quizData[questionQuizNumber - 1].options}
+          question={quizData[questionQuizNumber - 1].question}
+        />
+      )}
+    </div>
+  );
+};
+
+const Loading: React.FC = () => {
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-blue-500"></div>
     </div>
   );
 };
